@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1, initial-scale=1.0" />
+    <title>Rock Paper Scissors</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        font-family: sans-serif;
+      }
+
+      body {
+        background-color: rgb(25, 25, 25);
+        color: white;
+      }
+
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 25px;
+      }
+      .container div {
+        width: 100px;
+        height: 100px;
+        padding: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2.5px solid white;
+        border-radius: 100%;
+        font-size: 48px;
+        cursor: pointer;
+      }
+
+      button {
+        padding: 7px 12px;
+        font-size: 18px;
+        cursor: pointer;
+      }
+
+      #moves {
+        display: flex;
+        gap: 5px;
+      }
+      #moves img {
+        width: 50px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Rock Paper Scissors</h1>
+    <div class="container">
+      <div onclick="gameLogic('rock')">🗿</div>
+      <div onclick="gameLogic('paper')">🧻</div>
+      <div onclick="gameLogic('scissors')">✂️</div>
+    </div>
+    <h2 id="result"></h2>
+    <div id="moves">
+    </div>
+    <p id="score"></p>
+    <button onclick="resetScore()">Reset Score</button>
+  </body>
+
+  <script>
+    const resultDOM = document.getElementById("result");
+    const scoreDOM = document.getElementById("score");
+    const movesDOM = document.getElementById("moves")
+    movesDOM.style.display = "none" // moves div intially hide
+
+    if (!localStorage.getItem("score")) {
+      let score = {
+        wins: 0,
+        losses: 0,
+        draws: 0,
+      };
+
+      localStorage.setItem("score", JSON.stringify(score));
+    }
+
+    function gameLogic(move) {
+      const moves = ["rock", "paper", "scissors"];
+      const randomNum = Math.floor(Math.random() * moves.length);
+      const computerMove = moves[randomNum];
+
+      if (move === "rock" && computerMove === "rock") {
+        totalMoves(move, computerMove)
+        displayResult("draw", computerMove, move);
+      } else if (move === "rock" && computerMove === "paper") {
+        totalMoves(move, computerMove)
+        displayResult("lose", computerMove, move);
+      } else if (move === "rock" && computerMove === "scissors") {
+        totalMoves(move, computerMove)
+        displayResult("win", computerMove, move);
+      }
+
+      if (move === "paper" && computerMove === "paper") {
+        totalMoves(move, computerMove)
+        displayResult("draw", computerMove, move);
+      } else if (move === "paper" && computerMove === "scissors") {
+        totalMoves(move, computerMove)
+        displayResult("lose", computerMove, move);
+      } else if (move === "paper" && computerMove === "rock") {
+        totalMoves(move, computerMove)
+        displayResult("win", computerMove, move);
+      }
+
+      if (move === "scissors" && computerMove === "scissors") {
+        totalMoves(move, computerMove)
+        displayResult("draw", computerMove, move);
+      } else if (move === "scissors" && computerMove === "rock") {
+        totalMoves(move, computerMove)
+        displayResult("lose", computerMove, move);
+      } else if (move === "scissors" && computerMove === "paper") {
+        totalMoves(move, computerMove)
+        displayResult("win", computerMove, move);
+      }
+
+      movesDOM.style.display = "flex"
+    }
+
+    function totalMoves(playerMove, computerMove) {
+      movesDOM.innerHTML = `
+        <p>You</p>
+        <img src="imgs/${playerMove}-emoji.png" id="playerMoveIMG">
+        <img src="imgs/${computerMove}-emoji.png" id="computerMoveIMG">
+        <p>Computer</p>
+      `
+    }
+
+    function displayResult(result, computerMove, move) {
+      let score = JSON.parse(localStorage.getItem("score"));
+
+      if (result === "draw") {
+        score.draws++;
+        updateResult(score)
+      } else if (result === "lose") {
+        score.losses++;
+        updateResult(score)
+      } else if (result === "win") {
+        score.wins++;
+        updateResult(score)
+      }
+
+      if (result === "win" || result === "lose") {
+        resultDOM.textContent = `You ${result}.`;
+      } else {
+        resultDOM.textContent = `It's ${result}.`;
+      }
+
+      localStorage.setItem("score", JSON.stringify(score));
+    }
+
+    function updateResult(score) {
+      scoreDOM.textContent = `Wins: ${score.wins}, Losses: ${score.losses}, Draws: ${score.draws}`;
+
+    }
+
+    updateResult(JSON.parse(localStorage.getItem("score")))
+
+    function resetScore() {
+      let score = {
+          wins: 0,
+          losses: 0,
+          draws: 0
+        };
+
+        localStorage.setItem("score", JSON.stringify(score));
+        updateResult(score);
+        
+      resultDOM.textContent = ``;
+
+      movesDOM.style.display = "none"
+      movesDOM.innerHTML = ``
+    }
+  </script>
+</html>
